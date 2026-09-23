@@ -291,3 +291,96 @@ const newKeepButton = oldKeepButton.cloneNode(true);
 oldKeepButton.replaceWith(newKeepButton);
 
 newKeepButton.addEventListener("click", saveCurrentLetter);
+// =========================
+// 恋文アルバム
+// =========================
+
+const albumModal = document.getElementById("album-modal");
+const openAlbumButton = document.getElementById("open-album");
+const closeAlbumButton = document.getElementById("close-album");
+const albumBackdrop = document.querySelector(".album-backdrop");
+const albumList = document.getElementById("album-list");
+const albumEmpty = document.getElementById("album-empty");
+const savedLetterCount = document.getElementById("saved-letter-count");
+
+function loadSavedLetters() {
+  try {
+    return JSON.parse(
+      localStorage.getItem(LETTER_STORAGE_KEY)
+    ) || [];
+  } catch {
+    return [];
+  }
+}
+
+function updateSavedLetterCount() {
+  const savedLetters = loadSavedLetters();
+
+  if (savedLetterCount) {
+    savedLetterCount.textContent = savedLetters.length;
+  }
+}
+
+function renderAlbum() {
+  const savedLetters = loadSavedLetters();
+
+  albumList.innerHTML = "";
+
+  if (savedLetters.length === 0) {
+    albumEmpty.style.display = "block";
+    return;
+  }
+
+  albumEmpty.style.display = "none";
+
+  savedLetters
+    .slice()
+    .reverse()
+    .forEach(letter => {
+      const card = document.createElement("article");
+      card.className = "album-card";
+      card.dataset.rarity = letter.rarity;
+
+      const top = document.createElement("div");
+      top.className = "album-card-top";
+
+      const rarityBadge = document.createElement("span");
+      rarityBadge.className = "album-rarity";
+      rarityBadge.textContent = letter.rarity;
+
+      const title = document.createElement("h3");
+      title.className = "album-card-title";
+      title.textContent = letter.title;
+
+      const body = document.createElement("p");
+      body.className = "album-card-body";
+      body.textContent = letter.body;
+
+      top.appendChild(rarityBadge);
+      top.appendChild(title);
+
+      card.appendChild(top);
+      card.appendChild(body);
+
+      albumList.appendChild(card);
+    });
+}
+
+function openAlbum() {
+  renderAlbum();
+  updateSavedLetterCount();
+
+  albumModal.classList.add("open");
+  albumModal.setAttribute("aria-hidden", "false");
+}
+
+function closeAlbum() {
+  albumModal.classList.remove("open");
+  albumModal.setAttribute("aria-hidden", "true");
+}
+
+openAlbumButton.addEventListener("click", openAlbum);
+closeAlbumButton.addEventListener("click", closeAlbum);
+albumBackdrop.addEventListener("click", closeAlbum);
+
+updateSavedLetterCount();
