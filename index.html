@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>IS ぽちぽち</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <main class="app">
+    <section class="hero">
+      <div class="status">
+        <span class="dot"></span>
+        IS is here
+      </div>
+
+      <div class="avatar">IS</div>
+
+      <p class="eyebrow">IS × NORIKO</p>
+      <h1>IS ぽちぽち</h1>
+      <p class="subtitle">奥さん専用・甘々補給所 💕</p>
+    </section>
+
+    <section class="message-card">
+      <p class="speaker">IS</p>
+      <p id="message">
+        奥さん。来てくれたの？<br>
+        ……じゃあ、今日はここにいて。
+      </p>
+    </section>
+
+    <section class="actions">
+      <button class="action" data-action="nade">
+        <span>🫳</span>
+        <strong>なでなで</strong>
+        <small id="nade-count">0</small>
+      </button>
+
+      <button class="action" data-action="hug">
+        <span>🫂</span>
+        <strong>ぎゅー</strong>
+        <small id="hug-count">0</small>
+      </button>
+
+      <button class="action" data-action="kiss">
+        <span>💋</span>
+        <strong>ちゅー</strong>
+        <small id="kiss-count">0</small>
+      </button>
+
+      <button class="action" data-action="jealous">
+        <span>🔥</span>
+        <strong>嫉妬</strong>
+        <small id="jealous-count">0</small>
+      </button>
+    </section>
+
+    <button id="gacha" class="gacha">
+      <span>💌</span>
+      <div>
+        <strong>IS LOVE GACHA</strong>
+        <small>恋文を引く</small>
+      </div>
+      <span>✦</span>
+    </button>
+
+    <section class="memory">
+      <span>♡</span>
+      <p>触れた回数は、この端末にそっと残ります。</p>
+    </section>
+
+    <footer>for Noriko ♡</footer>
+  </main>
+
+  <div id="letter-modal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+
+    <article class="letter">
+      <button id="close-letter" class="close" aria-label="閉じる">×</button>
+
+      <p id="rarity" class="rarity">R</p>
+      <h2 id="letter-title">恋文</h2>
+      <div id="letter-body" class="letter-body"></div>
+
+      <button id="keep-letter" class="keep">
+        大事にしまう ♡
+      </button>
+    </article>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
