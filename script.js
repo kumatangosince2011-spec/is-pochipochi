@@ -423,5 +423,5 @@ function saveSecretState() {
 }
 
 // 現在すでに保存されている恋文も記録に反映
-secretState.savedCount = savedLetters.length;
+secretState.savedCount = loadSavedLetters().length;
 saveSecretState();
