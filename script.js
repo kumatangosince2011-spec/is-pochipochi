@@ -194,7 +194,8 @@ function chooseLetter() {
 
 function openLetter() {
   const letter = chooseLetter();
-
+secretState.gachaCount++;
+saveSecretState();
   rarity.textContent = letter.rarity;
   letterTitle.textContent = letter.title;
   letterBody.textContent = letter.body;
@@ -269,7 +270,10 @@ function saveCurrentLetter() {
     localStorage.setItem(
       LETTER_STORAGE_KEY,
       JSON.stringify(savedLetters)
-    );
+
+  secretState.savedCount = savedLetters.length;
+  saveSecretState();
+}
   }
 
   const keepButton = document.getElementById("keep-letter");
@@ -384,3 +388,40 @@ closeAlbumButton.addEventListener("click", closeAlbum);
 albumBackdrop.addEventListener("click", closeAlbum);
 
 updateSavedLetterCount();
+// ===== SECRET UR SYSTEM =====
+// まだ扉は開けない。
+// ここでは「秘密に辿り着くための記録」だけを残す。
+
+const SECRET_STORAGE_KEY = "is_pochipochi_secret_v1";
+
+function loadSecretState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(SECRET_STORAGE_KEY));
+
+    return {
+      gachaCount: 0,
+      savedCount: 0,
+      secretUrFound: false,
+      ...(saved || {})
+    };
+  } catch {
+    return {
+      gachaCount: 0,
+      savedCount: 0,
+      secretUrFound: false
+    };
+  }
+}
+
+let secretState = loadSecretState();
+
+function saveSecretState() {
+  localStorage.setItem(
+    SECRET_STORAGE_KEY,
+    JSON.stringify(secretState)
+  );
+}
+
+// 現在すでに保存されている恋文も記録に反映
+secretState.savedCount = savedLetters.length;
+saveSecretState();
