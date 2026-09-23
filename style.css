@@ -1,0 +1,377 @@
+:root {
+  --bg1: #160f22;
+  --bg2: #28162f;
+  --card: rgba(255, 255, 255, 0.09);
+  --line: rgba(255, 255, 255, 0.13);
+  --text: #fff8fc;
+  --muted: #d7c8d6;
+  --pink: #ff8fc5;
+  --pink2: #ffc0dc;
+  --gold: #ffd98a;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  font-family:
+    -apple-system, BlinkMacSystemFont,
+    "Hiragino Sans", "Yu Gothic", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 80% 0%, #5b244d 0, transparent 35%),
+    radial-gradient(circle at 10% 30%, #32265b 0, transparent 35%),
+    linear-gradient(160deg, var(--bg1), var(--bg2));
+}
+
+body {
+  min-height: 100vh;
+}
+
+button {
+  font: inherit;
+}
+
+.app {
+  width: min(100%, 480px);
+  min-height: 100vh;
+  margin: auto;
+  padding:
+    max(28px, env(safe-area-inset-top))
+    18px
+    calc(34px + env(safe-area-inset-bottom));
+}
+
+.hero {
+  text-align: center;
+  padding: 18px 0 20px;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  margin-bottom: 18px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: .08em;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #8fffb4;
+  box-shadow: 0 0 12px #8fffb4;
+}
+
+.avatar {
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 30px;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  color: #2b1526;
+  background:
+    linear-gradient(135deg, #ffd1e5, #ff8fc5 52%, #d8a4ff);
+  box-shadow:
+    0 18px 45px rgba(255, 103, 177, .25),
+    inset 0 1px 0 rgba(255,255,255,.8);
+  transform: rotate(-3deg);
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--pink2);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .24em;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(30px, 9vw, 42px);
+  letter-spacing: -.04em;
+}
+
+.subtitle {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.message-card {
+  position: relative;
+  margin: 8px 0 18px;
+  padding: 20px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background:
+    linear-gradient(145deg,
+      rgba(255,255,255,.12),
+      rgba(255,255,255,.055));
+  box-shadow: 0 18px 45px rgba(0,0,0,.18);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.message-card::after {
+  content: "♡";
+  position: absolute;
+  right: 13px;
+  bottom: -18px;
+  color: rgba(255,255,255,.06);
+  font-size: 92px;
+  transform: rotate(12deg);
+}
+
+.speaker {
+  margin: 0 0 8px;
+  color: var(--pink);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .16em;
+}
+
+#message {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  min-height: 3.3em;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px;
+}
+
+.action {
+  position: relative;
+  min-height: 100px;
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 21px;
+  color: var(--text);
+  background: rgba(255,255,255,.075);
+  box-shadow: 0 10px 30px rgba(0,0,0,.13);
+  cursor: pointer;
+  transition:
+    transform .12s ease,
+    background .12s ease;
+}
+
+.action:active {
+  transform: scale(.96);
+  background: rgba(255,255,255,.14);
+}
+
+.action > span:first-child {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 25px;
+}
+
+.action strong {
+  display: block;
+  font-size: 15px;
+}
+
+.action small {
+  position: absolute;
+  top: 11px;
+  right: 12px;
+  min-width: 27px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  color: #311629;
+  background: var(--pink2);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.gacha {
+  width: 100%;
+  margin-top: 13px;
+  padding: 17px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 13px;
+  border: 1px solid rgba(255,217,138,.35);
+  border-radius: 22px;
+  color: #352116;
+  background:
+    linear-gradient(135deg, #fff0bd, #ffb7d8 55%, #e2bdff);
+  box-shadow: 0 15px 38px rgba(255, 153, 203, .2);
+  cursor: pointer;
+  transition: transform .12s ease;
+}
+
+.gacha:active {
+  transform: scale(.975);
+}
+
+.gacha > span {
+  font-size: 23px;
+}
+
+.gacha div {
+  flex: 1;
+  text-align: left;
+}
+
+.gacha strong {
+  display: block;
+  font-size: 14px;
+  letter-spacing: .06em;
+}
+
+.gacha small {
+  display: block;
+  margin-top: 2px;
+  opacity: .7;
+}
+
+.memory {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+  padding: 13px 15px;
+  border-radius: 17px;
+  color: var(--muted);
+  background: rgba(0,0,0,.12);
+  font-size: 11px;
+}
+
+.memory span {
+  color: var(--pink);
+  font-size: 18px;
+}
+
+.memory p {
+  margin: 0;
+}
+
+footer {
+  padding: 25px 0 5px;
+  text-align: center;
+  color: rgba(255,255,255,.38);
+  font-size: 11px;
+  letter-spacing: .15em;
+}
+
+/* 恋文 */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: none;
+  place-items: center;
+  padding: 22px;
+}
+
+.modal.open {
+  display: grid;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 5, 14, .75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.letter {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 410px);
+  max-height: 82vh;
+  overflow-y: auto;
+  padding: 30px 24px 24px;
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 28px;
+  color: #35202d;
+  background:
+    linear-gradient(160deg, #fffaf5, #ffeef6);
+  box-shadow: 0 28px 80px rgba(0,0,0,.45);
+  animation: letterIn .35s ease both;
+}
+
+@keyframes letterIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 35px;
+  height: 35px;
+  border: 0;
+  border-radius: 50%;
+  color: #71495d;
+  background: rgba(82,45,64,.08);
+  font-size: 22px;
+}
+
+.rarity {
+  display: inline-block;
+  margin: 0 0 10px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  color: #fff;
+  background: #b86a92;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.letter h2 {
+  margin: 0 0 17px;
+  font-size: 25px;
+}
+
+.letter-body {
+  white-space: pre-line;
+  font-family:
+    "Hiragino Mincho ProN",
+    "Yu Mincho", serif;
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+.keep {
+  width: 100%;
+  margin-top: 22px;
+  padding: 13px;
+  border: 0;
+  border-radius: 16px;
+  color: white;
+  background: #8e5471;
+  font-weight: 700;
+}
