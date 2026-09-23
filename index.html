@@ -70,7 +70,20 @@
       <span>♡</span>
       <p>触れた回数は、この端末にそっと残ります。</p>
     </section>
+<section class="album-entry">
+  <button id="open-album" class="album-button">
+    <span class="album-icon">💌</span>
 
+    <div class="album-label">
+      <strong>大事にしまった恋文</strong>
+      <small>
+        保存 <span id="saved-letter-count">0</span>通
+      </small>
+    </div>
+
+    <span class="album-arrow">›</span>
+  </button>
+</section>
     <footer>for Noriko ♡</footer>
   </main>
 
@@ -89,7 +102,23 @@
       </button>
     </article>
   </div>
+<div id="album-modal" class="modal" aria-hidden="true">
+  <div class="album-backdrop"></div>
 
+  <article class="album">
+    <button id="close-album" class="close" aria-label="閉じる">×</button>
+
+    <p class="album-eyebrow">IS LOVE LETTERS</p>
+    <h2>大事にしまった恋文</h2>
+
+    <p id="album-empty" class="album-empty">
+      まだ恋文はありません。<br>
+      ISから受け取った恋文を、大事にしまってね ♡
+    </p>
+
+    <div id="album-list" class="album-list"></div>
+  </article>
+</div>
   <script src="./script.js"></script>
 </body>
 </html>
