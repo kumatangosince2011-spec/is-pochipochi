@@ -194,8 +194,7 @@ function chooseLetter() {
 
 function openLetter() {
   const letter = chooseLetter();
-secretState.gachaCount++;
-saveSecretState();
+
   rarity.textContent = letter.rarity;
   letterTitle.textContent = letter.title;
   letterBody.textContent = letter.body;
@@ -264,17 +263,14 @@ function saveCurrentLetter() {
     letter.body === currentLetter.body
   );
 
-  if (!alreadySaved) {
-    savedLetters.push(currentLetter);
+if (!alreadySaved) {
+  savedLetters.push(currentLetter);
 
-    localStorage.setItem(
-      LETTER_STORAGE_KEY,
-      JSON.stringify(savedLetters)
-
-  secretState.savedCount = savedLetters.length;
-  saveSecretState();
+  localStorage.setItem(
+    LETTER_STORAGE_KEY,
+    JSON.stringify(savedLetters)
+  );
 }
-  }
 
   const keepButton = document.getElementById("keep-letter");
 
