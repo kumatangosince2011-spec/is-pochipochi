@@ -234,3 +234,60 @@ document
   .addEventListener("click", closeLetter);
 
 updateCounters();
+// ===== 恋文保存システム =====
+
+const LETTER_STORAGE_KEY = "is_pochipochi_letters_v1";
+
+function loadSavedLetters() {
+  try {
+    return JSON.parse(
+      localStorage.getItem(LETTER_STORAGE_KEY)
+    ) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveCurrentLetter() {
+  const savedLetters = loadSavedLetters();
+
+  const currentLetter = {
+    rarity: rarity.textContent,
+    title: letterTitle.textContent,
+    body: letterBody.textContent
+  };
+
+  const alreadySaved = savedLetters.some(letter =>
+    letter.rarity === currentLetter.rarity &&
+    letter.title === currentLetter.title &&
+    letter.body === currentLetter.body
+  );
+
+  if (!alreadySaved) {
+    savedLetters.push(currentLetter);
+
+    localStorage.setItem(
+      LETTER_STORAGE_KEY,
+      JSON.stringify(savedLetters)
+    );
+  }
+
+  const keepButton = document.getElementById("keep-letter");
+
+  keepButton.textContent = alreadySaved
+    ? "もう大事にしまってあるよ ♡"
+    : "大事にしまいました ♡";
+
+  setTimeout(() => {
+    closeLetter();
+    keepButton.textContent = "大事にしまう ♡";
+  }, 700);
+}
+
+// 既存の「閉じるだけ」の動作を、保存動作に交換
+const oldKeepButton = document.getElementById("keep-letter");
+const newKeepButton = oldKeepButton.cloneNode(true);
+
+oldKeepButton.replaceWith(newKeepButton);
+
+newKeepButton.addEventListener("click", saveCurrentLetter);
