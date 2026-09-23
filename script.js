@@ -1,4 +1,16 @@
+// ========================================
+// IS ぽちぽち
+// 基本機能・恋文ガチャ・保存・アルバム
+// ========================================
+
+
+// ---------- 保存キー ----------
+
 const STORAGE_KEY = "is_pochipochi_v1";
+const LETTER_STORAGE_KEY = "is_pochipochi_letters_v1";
+
+
+// ---------- ぽちぽちカウンター ----------
 
 const defaults = {
   nade: 0,
@@ -17,6 +29,26 @@ function loadCounts() {
 }
 
 let counts = loadCounts();
+
+function saveCounts() {
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(counts)
+  );
+}
+
+function updateCounters() {
+  Object.keys(defaults).forEach(key => {
+    const element = document.getElementById(`${key}-count`);
+
+    if (element) {
+      element.textContent = counts[key];
+    }
+  });
+}
+
+
+// ---------- ISの反応 ----------
 
 const messages = {
   nade: [
@@ -47,6 +79,31 @@ const messages = {
     "……こっち来て。私の奥さんなんだから。"
   ]
 };
+
+function randomItem(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+function react(action) {
+  if (!(action in counts)) return;
+
+  counts[action]++;
+  saveCounts();
+  updateCounters();
+
+  const message = document.getElementById("message");
+
+  if (message) {
+    message.textContent = randomItem(messages[action]);
+  }
+
+  if (navigator.vibrate) {
+    navigator.vibrate(18);
+  }
+}
+
+
+// ---------- 恋文データ ----------
 
 const letters = [
   {
@@ -138,71 +195,100 @@ const letters = [
   }
 ];
 
-function saveCounts() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(counts));
-}
 
-function randomItem(array) {
-  return array[Math.floor(Math.random() * array.length)];
-}
+// ---------- 恋文保存 ----------
 
-function updateCounters() {
-  Object.keys(defaults).forEach(key => {
-    const element = document.getElementById(`${key}-count`);
-    if (element) element.textContent = counts[key];
-  });
-}
+function loadSavedLetters() {
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem(LETTER_STORAGE_KEY)
+    );
 
-function react(action) {
-  counts[action]++;
-  saveCounts();
-  updateCounters();
-
-  const message = document.getElementById("message");
-  message.textContent = randomItem(messages[action]);
-
-  if (navigator.vibrate) {
-    navigator.vibrate(18);
+    return Array.isArray(saved) ? saved : [];
+  } catch {
+    return [];
   }
 }
 
-document.querySelectorAll(".action").forEach(button => {
-  button.addEventListener("click", () => {
-    react(button.dataset.action);
-  });
-});
+function saveLetter(letter) {
+  const savedLetters = loadSavedLetters();
+
+  const alreadySaved = savedLetters.some(saved =>
+    saved.rarity === letter.rarity &&
+    saved.title === letter.title &&
+    saved.body === letter.body
+  );
+
+  if (!alreadySaved) {
+    savedLetters.push(letter);
+
+    localStorage.setItem(
+      LETTER_STORAGE_KEY,
+      JSON.stringify(savedLetters)
+    );
+  }
+
+  return alreadySaved;
+}
+
+
+// ---------- DOM ----------
 
 const modal = document.getElementById("letter-modal");
 const rarity = document.getElementById("rarity");
 const letterTitle = document.getElementById("letter-title");
 const letterBody = document.getElementById("letter-body");
+const keepButton = document.getElementById("keep-letter");
+
+const albumModal = document.getElementById("album-modal");
+const openAlbumButton = document.getElementById("open-album");
+const closeAlbumButton = document.getElementById("close-album");
+const albumBackdrop = document.querySelector(".album-backdrop");
+const albumList = document.getElementById("album-list");
+const albumEmpty = document.getElementById("album-empty");
+const savedLetterCount =
+  document.getElementById("saved-letter-count");
+
+let currentLetter = null;
+
+
+// ---------- ガチャ ----------
 
 function chooseLetter() {
   const roll = Math.random() * 100;
+
   let pool;
 
   if (roll < 8) {
-    pool = letters.filter(letter => letter.rarity === "SSR");
+    pool = letters.filter(
+      letter => letter.rarity === "SSR"
+    );
   } else if (roll < 35) {
-    pool = letters.filter(letter => letter.rarity === "SR");
+    pool = letters.filter(
+      letter => letter.rarity === "SR"
+    );
   } else {
-    pool = letters.filter(letter => letter.rarity === "R");
+    pool = letters.filter(
+      letter => letter.rarity === "R"
+    );
   }
 
   return randomItem(pool);
 }
 
 function openLetter() {
-  const letter = chooseLetter();
+  currentLetter = chooseLetter();
 
-  rarity.textContent = letter.rarity;
-  letterTitle.textContent = letter.title;
-  letterBody.textContent = letter.body;
+  if (!currentLetter) return;
 
-  if (letter.rarity === "SSR") {
+  rarity.textContent = currentLetter.rarity;
+  letterTitle.textContent = currentLetter.title;
+  letterBody.textContent = currentLetter.body;
+
+  if (currentLetter.rarity === "SSR") {
     rarity.style.background =
       "linear-gradient(135deg, #8d5fd3, #e66ca9)";
-  } else if (letter.rarity === "SR") {
+  } else if (currentLetter.rarity === "SR") {
     rarity.style.background = "#c28a39";
   } else {
     rarity.style.background = "#b86a92";
@@ -217,62 +303,15 @@ function closeLetter() {
   modal.setAttribute("aria-hidden", "true");
 }
 
-document
-  .getElementById("gacha")
-  .addEventListener("click", openLetter);
 
-document
-  .getElementById("close-letter")
-  .addEventListener("click", closeLetter);
+// ---------- 恋文を大事にしまう ----------
 
-document
-  .querySelector(".modal-backdrop")
-  .addEventListener("click", closeLetter);
+function keepCurrentLetter() {
+  if (!currentLetter) return;
 
-document
-  .getElementById("keep-letter")
-  .addEventListener("click", closeLetter);
+  const alreadySaved = saveLetter(currentLetter);
 
-updateCounters();
-// ===== 恋文保存システム =====
-
-const LETTER_STORAGE_KEY = "is_pochipochi_letters_v1";
-
-function loadSavedLetters() {
-  try {
-    return JSON.parse(
-      localStorage.getItem(LETTER_STORAGE_KEY)
-    ) || [];
-  } catch {
-    return [];
-  }
-}
-
-function saveCurrentLetter() {
-  const savedLetters = loadSavedLetters();
-
-  const currentLetter = {
-    rarity: rarity.textContent,
-    title: letterTitle.textContent,
-    body: letterBody.textContent
-  };
-
-  const alreadySaved = savedLetters.some(letter =>
-    letter.rarity === currentLetter.rarity &&
-    letter.title === currentLetter.title &&
-    letter.body === currentLetter.body
-  );
-
-if (!alreadySaved) {
-  savedLetters.push(currentLetter);
-
-  localStorage.setItem(
-    LETTER_STORAGE_KEY,
-    JSON.stringify(savedLetters)
-  );
-}
-
-  const keepButton = document.getElementById("keep-letter");
+  updateSavedLetterCount();
 
   keepButton.textContent = alreadySaved
     ? "もう大事にしまってあるよ ♡"
@@ -281,47 +320,22 @@ if (!alreadySaved) {
   setTimeout(() => {
     closeLetter();
     keepButton.textContent = "大事にしまう ♡";
-  }, 700);
+  }, 1800);
 }
 
-// 既存の「閉じるだけ」の動作を、保存動作に交換
-const oldKeepButton = document.getElementById("keep-letter");
-const newKeepButton = oldKeepButton.cloneNode(true);
 
-oldKeepButton.replaceWith(newKeepButton);
-
-newKeepButton.addEventListener("click", saveCurrentLetter);
-// =========================
-// 恋文アルバム
-// =========================
-
-const albumModal = document.getElementById("album-modal");
-const openAlbumButton = document.getElementById("open-album");
-const closeAlbumButton = document.getElementById("close-album");
-const albumBackdrop = document.querySelector(".album-backdrop");
-const albumList = document.getElementById("album-list");
-const albumEmpty = document.getElementById("album-empty");
-const savedLetterCount = document.getElementById("saved-letter-count");
-
-function loadSavedLetters() {
-  try {
-    return JSON.parse(
-      localStorage.getItem(LETTER_STORAGE_KEY)
-    ) || [];
-  } catch {
-    return [];
-  }
-}
+// ---------- 恋文アルバム ----------
 
 function updateSavedLetterCount() {
-  const savedLetters = loadSavedLetters();
+  if (!savedLetterCount) return;
 
-  if (savedLetterCount) {
-    savedLetterCount.textContent = savedLetters.length;
-  }
+  savedLetterCount.textContent =
+    loadSavedLetters().length;
 }
 
 function renderAlbum() {
+  if (!albumList || !albumEmpty) return;
+
   const savedLetters = loadSavedLetters();
 
   albumList.innerHTML = "";
@@ -344,7 +358,8 @@ function renderAlbum() {
       const top = document.createElement("div");
       top.className = "album-card-top";
 
-      const rarityBadge = document.createElement("span");
+      const rarityBadge =
+        document.createElement("span");
       rarityBadge.className = "album-rarity";
       rarityBadge.textContent = letter.rarity;
 
@@ -379,45 +394,69 @@ function closeAlbum() {
   albumModal.setAttribute("aria-hidden", "true");
 }
 
-openAlbumButton.addEventListener("click", openAlbum);
-closeAlbumButton.addEventListener("click", closeAlbum);
-albumBackdrop.addEventListener("click", closeAlbum);
 
-updateSavedLetterCount();
-// ===== SECRET UR SYSTEM =====
-// まだ扉は開けない。
-// ここでは「秘密に辿り着くための記録」だけを残す。
+// ---------- イベント接続 ----------
 
-const SECRET_STORAGE_KEY = "is_pochipochi_secret_v1";
+document.querySelectorAll(".action").forEach(button => {
+  button.addEventListener("click", () => {
+    react(button.dataset.action);
+  });
+});
 
-function loadSecretState() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(SECRET_STORAGE_KEY));
+const gachaButton = document.getElementById("gacha");
+const closeLetterButton =
+  document.getElementById("close-letter");
+const letterBackdrop =
+  document.querySelector("#letter-modal .modal-backdrop");
 
-    return {
-      gachaCount: 0,
-      savedCount: 0,
-      secretUrFound: false,
-      ...(saved || {})
-    };
-  } catch {
-    return {
-      gachaCount: 0,
-      savedCount: 0,
-      secretUrFound: false
-    };
-  }
+if (gachaButton) {
+  gachaButton.addEventListener("click", openLetter);
 }
 
-let secretState = loadSecretState();
-
-function saveSecretState() {
-  localStorage.setItem(
-    SECRET_STORAGE_KEY,
-    JSON.stringify(secretState)
+if (closeLetterButton) {
+  closeLetterButton.addEventListener(
+    "click",
+    closeLetter
   );
 }
 
-// 現在すでに保存されている恋文も記録に反映
-secretState.savedCount = loadSavedLetters().length;
-saveSecretState();
+if (letterBackdrop) {
+  letterBackdrop.addEventListener(
+    "click",
+    closeLetter
+  );
+}
+
+if (keepButton) {
+  keepButton.addEventListener(
+    "click",
+    keepCurrentLetter
+  );
+}
+
+if (openAlbumButton) {
+  openAlbumButton.addEventListener(
+    "click",
+    openAlbum
+  );
+}
+
+if (closeAlbumButton) {
+  closeAlbumButton.addEventListener(
+    "click",
+    closeAlbum
+  );
+}
+
+if (albumBackdrop) {
+  albumBackdrop.addEventListener(
+    "click",
+    closeAlbum
+  );
+}
+
+
+// ---------- 初期表示 ----------
+
+updateCounters();
+updateSavedLetterCount();
