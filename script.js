@@ -8,6 +8,7 @@
 
 const STORAGE_KEY = "is_pochipochi_v1";
 const LETTER_STORAGE_KEY = "is_pochipochi_letters_v1";
+const SECRET_STORAGE_KEY = "is_pochipochi_secret_v1";
 
 
 // ---------- ぽちぽちカウンター ----------
@@ -210,6 +211,76 @@ function loadSavedLetters() {
   }
 }
 
+
+// ---------- SECRET UR 内部進捗 ----------
+
+const secretProgressDefaults = {
+  gachaCount: 0,
+  savedCount: 0,
+  secretUrFound: false
+};
+
+function countUniqueLetters(savedLetters) {
+  const uniqueLetters = new Set(
+    savedLetters.map(letter => JSON.stringify([
+      letter && letter.rarity,
+      letter && letter.title,
+      letter && letter.body
+    ]))
+  );
+
+  return uniqueLetters.size;
+}
+
+function loadSecretProgress() {
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem(SECRET_STORAGE_KEY)
+    );
+
+    if (!saved || typeof saved !== "object" || Array.isArray(saved)) {
+      return { ...secretProgressDefaults };
+    }
+
+    return {
+      gachaCount:
+        Number.isSafeInteger(saved.gachaCount) &&
+        saved.gachaCount >= 0
+          ? saved.gachaCount
+          : 0,
+      savedCount: 0,
+      secretUrFound: saved.secretUrFound === true
+    };
+  } catch {
+    return { ...secretProgressDefaults };
+  }
+}
+
+let secretProgress = loadSecretProgress();
+
+function saveSecretProgress() {
+  try {
+    localStorage.setItem(
+      SECRET_STORAGE_KEY,
+      JSON.stringify(secretProgress)
+    );
+  } catch {
+    // 保存領域が利用できない場合も既存機能は継続する
+  }
+}
+
+function syncSecretSavedCount() {
+  secretProgress.savedCount = countUniqueLetters(
+    loadSavedLetters()
+  );
+  saveSecretProgress();
+}
+
+function recordGachaDraw() {
+  secretProgress.gachaCount++;
+  saveSecretProgress();
+}
+
 function saveLetter(letter) {
   const savedLetters = loadSavedLetters();
 
@@ -227,6 +298,8 @@ function saveLetter(letter) {
       JSON.stringify(savedLetters)
     );
   }
+
+  syncSecretSavedCount();
 
   return alreadySaved;
 }
@@ -277,6 +350,7 @@ function chooseLetter() {
 }
 
 function openLetter() {
+  recordGachaDraw();
   currentLetter = chooseLetter();
 
   if (!currentLetter) return;
@@ -459,4 +533,5 @@ if (albumBackdrop) {
 // ---------- 初期表示 ----------
 
 updateCounters();
+syncSecretSavedCount();
 updateSavedLetterCount();
