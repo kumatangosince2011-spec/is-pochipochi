@@ -736,11 +736,10 @@ function chooseLetter() {
   return randomItem(pool);
 }
 
-function openLetter() {
-  recordGachaDraw();
-  currentLetter = chooseLetter();
+function showLetter(letter, { fromAlbum = false } = {}) {
+  if (!letter) return;
 
-  if (!currentLetter) return;
+  currentLetter = letter;
 
   rarity.textContent = currentLetter.rarity;
   letterTitle.textContent = currentLetter.title;
@@ -755,13 +754,29 @@ function openLetter() {
     rarity.style.background = "#b86a92";
   }
 
+  if (keepButton) {
+    keepButton.style.display = fromAlbum ? "none" : "";
+  }
+
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
+}
+
+function openLetter() {
+  recordGachaDraw();
+  const letter = chooseLetter();
+
+  showLetter(letter);
 }
 
 function closeLetter() {
   modal.classList.remove("open");
   modal.setAttribute("aria-hidden", "true");
+
+  if (keepButton) {
+    keepButton.style.display = "";
+    keepButton.textContent = "大事にしまう ♡";
+  }
 }
 
 
@@ -837,6 +852,26 @@ function renderAlbum() {
 
       card.appendChild(top);
       card.appendChild(body);
+
+      card.setAttribute("role", "button");
+      card.setAttribute("tabindex", "0");
+      card.setAttribute(
+        "aria-label",
+        `${letter.title}を大きく開く`
+      );
+
+      const reopenLetter = () => {
+        closeAlbum();
+        showLetter(letter, { fromAlbum: true });
+      };
+
+      card.addEventListener("click", reopenLetter);
+      card.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          reopenLetter();
+        }
+      });
 
       albumList.appendChild(card);
     });
