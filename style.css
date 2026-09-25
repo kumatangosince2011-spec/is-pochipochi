@@ -565,3 +565,123 @@ footer {
   font-size: 12px;
   line-height: 1.8;
 }
+
+
+/* =========================
+   SECRET UR
+   ========================= */
+
+.secret-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: none;
+  place-items: center;
+  overflow: hidden;
+  padding: 28px;
+  color: #fff7fb;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(223,142,200,.2), transparent 34%),
+    radial-gradient(circle at 50% 65%, rgba(157,124,229,.14), transparent 42%),
+    #0d0812;
+}
+
+.secret-reveal.open {
+  display: grid;
+  animation: secretFadeIn 1.2s ease both;
+}
+
+.secret-stars {
+  position: absolute;
+  inset: 14% 8% auto;
+  color: rgba(255,225,244,.7);
+  font-size: 20px;
+  letter-spacing: .5em;
+  text-align: center;
+  animation: secretGlow 2.8s ease-in-out infinite;
+}
+
+.secret-reveal-inner {
+  position: relative;
+  width: min(100%, 390px);
+  padding: 42px 26px 34px;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 28px;
+  background: rgba(255,255,255,.055);
+  box-shadow: 0 28px 90px rgba(0,0,0,.55);
+  text-align: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.secret-kicker {
+  margin: 0 0 22px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .28em;
+  background: linear-gradient(90deg, #f6d78a, #f0a7c8, #b69af1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.secret-line {
+  margin: 0;
+  font-family:
+    "Hiragino Mincho ProN",
+    "Yu Mincho", serif;
+  font-size: 20px;
+  line-height: 1.9;
+}
+
+.secret-continue {
+  width: 100%;
+  margin-top: 30px;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 17px;
+  color: #fff7fb;
+  background:
+    linear-gradient(135deg, rgba(223,142,200,.45), rgba(157,124,229,.4));
+  font-weight: 800;
+}
+
+.secret-note {
+  margin: 15px 0 0;
+  color: rgba(255,255,255,.48);
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+.album-card[data-rarity="SECRET UR"] {
+  border-color: rgba(246,215,138,.36);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(246,215,138,.11),
+      rgba(223,142,200,.11),
+      rgba(157,124,229,.10)
+    );
+}
+
+.album-card[data-rarity="SECRET UR"] .album-rarity {
+  background:
+    linear-gradient(135deg, #d6ad50, #d777aa, #8063c9);
+}
+
+@keyframes secretFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes secretGlow {
+  0%, 100% { opacity: .42; transform: scale(.98); }
+  50% { opacity: 1; transform: scale(1.03); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .secret-reveal.open,
+  .secret-stars {
+    animation: none;
+  }
+}
