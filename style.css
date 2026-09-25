@@ -535,6 +535,21 @@ footer {
     linear-gradient(135deg, #8d5fd3, #e66ca9);
 }
 
+.album-card[data-rarity="IS Signature"] {
+  border-color: rgba(240,167,200,.34);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(240,167,200,.12),
+      rgba(159,117,217,.10)
+    );
+}
+
+.album-card[data-rarity="IS Signature"] .album-rarity {
+  background:
+    linear-gradient(135deg, #f0a7c8, #9f75d9);
+}
+
 .album-card-title {
   margin: 0;
   font-size: 15px;
